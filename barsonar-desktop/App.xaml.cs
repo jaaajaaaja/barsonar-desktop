@@ -1,5 +1,4 @@
-﻿using System.Configuration;
-using System.Data;
+﻿using DotNetEnv;
 using System.Windows;
 
 namespace barsonar_desktop
@@ -9,6 +8,10 @@ namespace barsonar_desktop
     /// </summary>
     public partial class App : Application
     {
+        public App()
+        {
+            Env.Load();
+        }
     }
 
 }
