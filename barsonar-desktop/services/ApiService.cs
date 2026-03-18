@@ -57,5 +57,24 @@ namespace barsonar_desktop.services
 
             return user;
         }
+
+        public async Task<List<Photo>> GetAllPhotosAsync()
+        {
+            var response = await _httpClient.GetAsync("/photo/all");
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<List<Photo>>() ?? new List<Photo>();
+        }
+
+        public async Task ApprovePhotoAsync(int id)
+        {
+            var response = await _httpClient.PutAsync($"/photo/{id}/approved", null);
+            response.EnsureSuccessStatusCode();
+        }
+
+        public async Task DeletePhotoAsync(int id)
+        {
+            var response = await _httpClient.DeleteAsync($"/photo/{id}");
+            response.EnsureSuccessStatusCode();
+        }
     }
 }
