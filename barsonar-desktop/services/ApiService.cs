@@ -101,5 +101,26 @@ namespace barsonar_desktop.services
             var response = await _httpClient.DeleteAsync($"/comment/{id}");
             response.EnsureSuccessStatusCode();
         }
+
+        //NEWS
+
+        public async Task<List<News>> GetAllNewsAsync()
+        {
+            var response = await _httpClient.GetAsync("/place/news/all");
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<List<News>>() ?? new List<News>();
+        }
+
+        public async Task ApproveNewsAsync(int id)
+        {
+            var response = await _httpClient.PutAsync($"/place/{id}/approve", null);
+            response.EnsureSuccessStatusCode();
+        }
+
+        public async Task DeleteNewsAsync(int id)
+        {
+            var response = await _httpClient.DeleteAsync($"/place/news/{id}");
+            response.EnsureSuccessStatusCode();
+        }
     }
 }
