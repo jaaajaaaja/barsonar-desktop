@@ -30,6 +30,8 @@ namespace barsonar_desktop.services
             };
         }
 
+        //LOGIN
+
         public async Task<User> LoginAsync(string email, string password)
         {
             var response = await _httpClient.PostAsJsonAsync("/auth/login", new { email, password });
@@ -58,6 +60,8 @@ namespace barsonar_desktop.services
             return user;
         }
 
+        //PHOTO
+
         public async Task<List<Photo>> GetAllPhotosAsync()
         {
             var response = await _httpClient.GetAsync("/photo/all");
@@ -74,6 +78,27 @@ namespace barsonar_desktop.services
         public async Task DeletePhotoAsync(int id)
         {
             var response = await _httpClient.DeleteAsync($"/photo/{id}");
+            response.EnsureSuccessStatusCode();
+        }
+
+        //COMMENT
+
+        public async Task<List<Comment>> GetAllCommentsAsync()
+        {
+            var response = await _httpClient.GetAsync("/comment/all");
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<List<Comment>>() ?? new List<Comment>();
+        }
+
+        public async Task ApproveCommentAsync(int id)
+        {
+            var response = await _httpClient.PutAsync($"/comment/{id}/approved", null);
+            response.EnsureSuccessStatusCode();
+        }
+
+        public async Task DeleteCommentAsync(int id)
+        {
+            var response = await _httpClient.DeleteAsync($"/comment/{id}");
             response.EnsureSuccessStatusCode();
         }
     }
