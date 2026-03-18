@@ -122,5 +122,53 @@ namespace barsonar_desktop.services
             var response = await _httpClient.DeleteAsync($"/place/news/{id}");
             response.EnsureSuccessStatusCode();
         }
+
+        //USERS
+
+        public async Task<List<User>> GetAllUsersAsync()
+        {
+            var response = await _httpClient.GetAsync("/user/all");
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<List<User>>() ?? new List<User>();
+        }
+
+        //PLACES
+
+        public async Task<List<Place>> GetAllPlacesAsync()
+        {
+            var response = await _httpClient.GetAsync("/place/all");
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<List<Place>>() ?? new List<Place>();
+        }
+
+        public async Task<List<PlaceStatistics>> GetPlaceStatisticsAsync(PeriodEnum period = PeriodEnum.MONTH, int? year = null)
+        {
+            var periodValue = period.ToString().ToLower();
+            var url = $"/place/statistics?period={periodValue}";
+
+            if (year.HasValue)
+            {
+                url += $"&year={year.Value}";
+            }
+
+            var response = await _httpClient.GetAsync(url);
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<List<PlaceStatistics>>() ?? new List<PlaceStatistics>();
+        }
+
+        //IMAGE LOAD
+
+        public string GetImageUrl(string location)
+        {
+            return $"{BASE_URL}/{location}";
+        }
+    }
+
+    public enum PeriodEnum
+    {
+        YEAR,
+        MONTH,
+        WEEK,
+        TODAY
     }
 }
