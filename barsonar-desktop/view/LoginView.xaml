@@ -1,0 +1,196 @@
+﻿<Window x:Class="barsonar_desktop.view.LoginView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="BarSonar Admin" Height="550" Width="450"
+        WindowStyle="None"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterScreen"
+        Background="Transparent"
+        AllowsTransparency="True"
+        MouseDown="Window_MouseDown">
+    <Window.Resources>
+        
+        <Style x:Key="ModernTextBox" TargetType="TextBox">
+            <Setter Property="Background" Value="#2A2A3E"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Padding" Value="14,10"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="CaretBrush" Value="#FEC428"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border Background="{TemplateBinding Background}"
+                        CornerRadius="12"
+                        Padding="{TemplateBinding Padding}">
+                            <ScrollViewer x:Name="PART_ContentHost" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="ModernPasswordBox" TargetType="PasswordBox">
+            <Setter Property="Background" Value="#2A2A3E"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Padding" Value="14,10"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="CaretBrush" Value="#FEC428"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="PasswordBox">
+                        <Border Background="{TemplateBinding Background}"
+                        CornerRadius="12"
+                        Padding="{TemplateBinding Padding}">
+                            <ScrollViewer x:Name="PART_ContentHost" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        
+    </Window.Resources>
+
+    <Border CornerRadius="20" Background="#1A1A2E">
+        
+        <Border.Effect>
+            <DropShadowEffect BlurRadius="30" ShadowDepth="0" Opacity="0.6" Color="Black"/>
+        </Border.Effect>
+
+        <Grid>
+            
+            <Grid VerticalAlignment="Top" Height="40" Margin="10,5,10,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="32"/>
+                    <ColumnDefinition Width="32"/>
+                </Grid.ColumnDefinitions>
+
+                <Button x:Name="btnMinimize" Grid.Column="1"
+                    Content="─" FontSize="12" Foreground="#888"
+                    Background="Transparent" BorderThickness="0"
+                    Cursor="Hand" Click="bntMinimize_Click"
+                    Width="28" Height="28">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="bg" Background="Transparent" CornerRadius="8">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="bg" Property="Background" Value="#2A2A3E"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+
+                <Button x:Name="btnClose" Grid.Column="2"
+                    Content="✕" FontSize="12" Foreground="#888"
+                    Background="Transparent" BorderThickness="0"
+                    Cursor="Hand" Click="btnClose_Click"
+                    Width="28" Height="28">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="bg" Background="Transparent" CornerRadius="8">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="bg" Property="Background" Value="#E04040"/>
+                                    <Setter Property="Foreground" Value="White"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+            </Grid>
+
+            <StackPanel Width="320" VerticalAlignment="Center" Margin="0,-10,0,0">
+
+                <Image Source="/images/logo_admin.png" Height="80" Margin="0,0,0,10"
+                   RenderOptions.BitmapScalingMode="HighQuality"/>
+
+                <TextBlock Text="Admin Panel"
+                       Foreground="White" FontSize="26" FontWeight="SemiBold"
+                       HorizontalAlignment="Center" Margin="0,0,0,5"/>
+
+                <TextBlock Text="Jelentkezz be a folytatáshoz"
+                       Foreground="#777" FontSize="13"
+                       HorizontalAlignment="Center" Margin="0,0,0,30"/>
+
+                <TextBlock Text="Email cím" Foreground="#999" FontSize="12"
+                       Margin="5,0,0,6"/>
+
+                <TextBox x:Name="txtBox_Email"
+                     Style="{StaticResource ModernTextBox}"
+                     Margin="0,0,0,16"/>
+
+                <TextBlock Text="Jelszó" Foreground="#999" FontSize="12"
+                       Margin="5,0,0,6"/>
+
+                <PasswordBox x:Name="pwdBox_Pass"
+                         Style="{StaticResource ModernPasswordBox}"
+                         Margin="0,0,0,8"/>
+
+                <TextBlock x:Name="txtError"
+                       Foreground="#FF6B6B" FontSize="12"
+                       HorizontalAlignment="Center"
+                       Margin="0,4,0,12"
+                       TextWrapping="Wrap"
+                       Visibility="Collapsed"/>
+
+                <Button x:Name="btnLogin"
+                    Content="Bejelentkezés"
+                    Foreground="Black" FontSize="15" FontWeight="SemiBold"
+                    Cursor="Hand"
+                    Click="btnLogin_Click"
+                    Height="44"
+                    Margin="0,6,0,0">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="btnBorder" CornerRadius="12" Cursor="Hand">
+                                <Border.Background>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                        <GradientStop Color="#FEC428" Offset="0"/>
+                                        <GradientStop Color="#F0A000" Offset="1"/>
+                                    </LinearGradientBrush>
+                                </Border.Background>
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="btnBorder" Property="Background">
+                                        <Setter.Value>
+                                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                                <GradientStop Color="#FFD54F" Offset="0"/>
+                                                <GradientStop Color="#FEC428" Offset="1"/>
+                                            </LinearGradientBrush>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Trigger>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter TargetName="btnBorder" Property="Opacity" Value="0.5"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+
+                <TextBlock x:Name="txtLoading"
+                       Text="Bejelentkezés folyamatban..."
+                       Foreground="#FEC428" FontSize="12"
+                       HorizontalAlignment="Center"
+                       Margin="0,12,0,0"
+                       Visibility="Collapsed"/>
+
+            </StackPanel>
+            
+        </Grid>
+        
+    </Border>
+</Window>
