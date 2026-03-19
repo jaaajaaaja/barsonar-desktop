@@ -5,8 +5,685 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:barsonar_desktop"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
+        Title="BarSonar Admin Dashboard" Height="720" Width="1100"
+        WindowStyle="None"
+        ResizeMode="CanResize"
+        WindowStartupLocation="CenterScreen"
+        Background="Transparent"
+        AllowsTransparency="True"
+        MouseDown="Window_MouseDown">
+    <Window.Resources>
 
-    </Grid>
+        <Style x:Key="SidebarButton" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="#999"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Height" Value="46"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="Padding" Value="20,0,0,0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="bg" Background="{TemplateBinding Background}"
+                            CornerRadius="0,12,12,0" Margin="0,2,8,2">
+                            <ContentPresenter VerticalAlignment="Center"
+                                          Margin="{TemplateBinding Padding}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="bg" Property="Background" Value="#252540"/>
+                                <Setter Property="Foreground" Value="White"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="SidebarButtonActive" TargetType="Button" BasedOn="{StaticResource SidebarButton}">
+            <Setter Property="Background" Value="#2A2A4A"/>
+            <Setter Property="Foreground" Value="#FEC428"/>
+        </Style>
+
+        <Style x:Key="ApproveBtn" TargetType="Button">
+            <Setter Property="Background" Value="#2ECC71"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="16,6"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="bg" Background="{TemplateBinding Background}"
+                            CornerRadius="8" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="bg" Property="Background" Value="#27AE60"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="DeleteBtn" TargetType="Button">
+            <Setter Property="Background" Value="#E74C3C"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="16,6"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="bg" Background="{TemplateBinding Background}"
+                            CornerRadius="8" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="bg" Property="Background" Value="#C0392B"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="TitleBarBtn" TargetType="Button">
+            <Setter Property="Width" Value="32"/>
+            <Setter Property="Height" Value="32"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="#777"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="bg" Background="{TemplateBinding Background}" CornerRadius="8">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="bg" Property="Background" Value="#2A2A3E"/>
+                                <Setter Property="Foreground" Value="White"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="PendingBadge" TargetType="Border">
+            <Setter Property="Background" Value="#3A2000"/>
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="Padding" Value="8,3"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+        </Style>
+        <Style x:Key="ApprovedBadge" TargetType="Border">
+            <Setter Property="Background" Value="#0A3A1A"/>
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="Padding" Value="8,3"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+        </Style>
+
+        <Style x:Key="ModernComboBox" TargetType="ComboBox">
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Height" Value="32"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBox">
+                        <Grid>
+                            <Border x:Name="MainBorder" 
+                        Background="#2A2A4A" 
+                        BorderBrush="#3A3A5A" 
+                        BorderThickness="1" 
+                        CornerRadius="8">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition Width="32"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <ContentPresenter x:Name="ContentSite"
+                                        Content="{TemplateBinding SelectionBoxItem}"
+                                        ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                        Margin="12,0,0,0"
+                                        VerticalAlignment="Center"
+                                        HorizontalAlignment="Left"
+                                        IsHitTestVisible="False"/>
+
+                                    <ToggleButton x:Name="ToggleButton"
+                                    Grid.Column="0" Grid.ColumnSpan="2"
+                                    Focusable="false"
+                                    IsChecked="{Binding Path=IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                    Background="Transparent"
+                                    BorderThickness="0"/>
+
+                                    <Path x:Name="Arrow" Grid.Column="1"
+                              Data="M 0 0 L 4 4 L 8 0 Z"
+                              Fill="#FEC428"
+                              HorizontalAlignment="Center"
+                              VerticalAlignment="Center"
+                              IsHitTestVisible="False"/>
+                                </Grid>
+                            </Border>
+
+                            <Popup x:Name="Popup"
+                       Placement="Bottom"
+                       IsOpen="{TemplateBinding IsDropDownOpen}"
+                       AllowsTransparency="True"
+                       Focusable="False"
+                       PopupAnimation="Slide">
+                                <Border Background="#2A2A4A"
+                            BorderBrush="#FEC428"
+                            BorderThickness="1"
+                            CornerRadius="8"
+                            Margin="0,4,0,0"
+                            MinWidth="{TemplateBinding ActualWidth}">
+                                    <ScrollViewer Margin="0,4" MaxHeight="200">
+                                        <StackPanel IsItemsHost="True"/>
+                                    </ScrollViewer>
+                                </Border>
+                            </Popup>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="MainBorder" Property="Background" Value="#333360"/>
+                                <Setter TargetName="MainBorder" Property="BorderBrush" Value="#FEC428"/>
+                            </Trigger>
+                            <Trigger Property="IsDropDownOpen" Value="True">
+                                <Setter TargetName="MainBorder" Property="BorderBrush" Value="#FEC428"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="ComboBoxItem">
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Padding" Value="12,8"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBoxItem">
+                        <Border x:Name="Bd" 
+                    Background="Transparent" 
+                    CornerRadius="6" 
+                    Margin="4,2">
+                            <ContentPresenter Margin="{TemplateBinding Padding}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsHighlighted" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#3A3A5A"/>
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#FEC428"/>
+                                <Setter Property="Foreground" Value="#12121F"/>
+                                <Setter Property="FontWeight" Value="SemiBold"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        
+    </Window.Resources>
+
+    <Border CornerRadius="16" Background="#12121F">
+        <Border.Effect>
+            <DropShadowEffect BlurRadius="30" ShadowDepth="0" Opacity="0.5" Color="Black"/>
+        </Border.Effect>
+
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="48"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+
+            <Border Grid.Row="0" Background="#16162A" CornerRadius="16,16,0,0">
+                <Grid Margin="16,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <TextBlock Text="◆" Foreground="#FEC428" FontSize="16" Margin="0,0,8,0"
+                                VerticalAlignment="Center"/>
+                        <TextBlock Text="BarSonar" Foreground="White" FontSize="15" FontWeight="SemiBold"
+                                VerticalAlignment="Center"/>
+                        <TextBlock Text=" Admin" Foreground="#FEC428" FontSize="15" FontWeight="SemiBold"
+                                VerticalAlignment="Center"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="1" Orientation="Horizontal">
+                        <TextBlock x:Name="txtWelcome" Foreground="#888" FontSize="12"
+                                VerticalAlignment="Center" Margin="0,0,12,0"/>
+                        <Button Style="{StaticResource TitleBarBtn}" Content="─"
+                             Click="btnMinimize_Click"/>
+                        <Button Style="{StaticResource TitleBarBtn}" Content="□"
+                             Click="btnMaximize_Click"/>
+                        <Button x:Name="btnCloseTop" Content="✕"
+                             Width="32" Height="32" Background="Transparent" Foreground="#777"
+                             BorderThickness="0" Cursor="Hand" Click="btnClose_Click">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border x:Name="bg" Background="Transparent" CornerRadius="8">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="bg" Property="Background" Value="#E04040"/>
+                                            <Setter Property="Foreground" Value="White"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="220"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+
+                <Border Grid.Column="0" Background="#16162A" CornerRadius="0,0,0,16">
+                    <DockPanel>
+                        <Button DockPanel.Dock="Bottom" Style="{StaticResource SidebarButton}"
+                             Content="⎋  Kijelentkezés" Foreground="#E74C3C"
+                             Click="btnLogout_Click" Margin="0,0,0,12"/>
+
+                        <StackPanel Margin="0,20,0,0">
+                            <TextBlock Text="KEZELÉS" Foreground="#555" FontSize="11"
+                                    FontWeight="Bold" Margin="20,0,0,10" />
+
+                            <Button x:Name="btnNavPhotos" Content="📷  Fotók"
+                                 Style="{StaticResource SidebarButtonActive}"
+                                 Click="btnNavPhotos_Click"/>
+                            <Button x:Name="btnNavComments" Content="💬  Kommentek"
+                                 Style="{StaticResource SidebarButton}"
+                                 Click="btnNavComments_Click"/>
+                            <Button x:Name="btnNavNews" Content="📰  Hírek"
+                                 Style="{StaticResource SidebarButton}"
+                                 Click="btnNavNews_Click"/>
+
+                            <TextBlock Text="ADATOK" Foreground="#555" FontSize="11"
+                                    FontWeight="Bold" Margin="20,20,0,10" />
+
+                            <Button x:Name="btnNavAllData" Content="📊  Összes adat"
+                                 Style="{StaticResource SidebarButton}"
+                                 Click="btnNavAllData_Click"/>
+                            <Button x:Name="btnNavStatistics" Content="📈  Statisztika"
+                                 Style="{StaticResource SidebarButton}"
+                                 Click="btnNavStatistics_Click"/>
+                        </StackPanel>
+                    </DockPanel>
+                </Border>
+
+                <Border Grid.Column="1" Background="#1A1A2E" CornerRadius="0,0,16,0">
+                    <Grid Margin="24,20">
+
+                        <TabControl x:Name="tabControl" Background="Transparent" BorderThickness="0"
+                                 Padding="0" Margin="0">
+                            <TabControl.ItemContainerStyle>
+                                <Style TargetType="TabItem">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                </Style>
+                            </TabControl.ItemContainerStyle>
+
+                            <TabItem x:Name="tabPhotos">
+                                <DockPanel>
+                                    <Grid DockPanel.Dock="Top" Margin="0,0,0,16">
+                                        <TextBlock Text="Fotók kezelése" Foreground="White"
+                                                FontSize="22" FontWeight="SemiBold"/>
+                                        <Button Content="⟳ Frissítés" HorizontalAlignment="Right"
+                                             Style="{StaticResource ApproveBtn}"
+                                             Background="#3A3A5A" Click="btnRefreshPhotos_Click"/>
+                                    </Grid>
+
+                                    <ScrollViewer VerticalScrollBarVisibility="Auto"
+                                               HorizontalScrollBarVisibility="Disabled">
+                                        <ItemsControl x:Name="photosPanel">
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <WrapPanel/>
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                        </ItemsControl>
+                                    </ScrollViewer>
+                                </DockPanel>
+                            </TabItem>
+
+                            <TabItem x:Name="tabComments">
+                                <DockPanel>
+                                    <Grid DockPanel.Dock="Top" Margin="0,0,0,16">
+                                        <TextBlock Text="Kommentek kezelése" Foreground="White"
+                                                FontSize="22" FontWeight="SemiBold"/>
+                                        <Button Content="⟳ Frissítés" HorizontalAlignment="Right"
+                                             Style="{StaticResource ApproveBtn}"
+                                             Background="#3A3A5A" Click="btnRefreshComments_Click"/>
+                                    </Grid>
+
+                                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                        <ItemsControl x:Name="commentsPanel">
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <StackPanel/>
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                        </ItemsControl>
+                                    </ScrollViewer>
+                                </DockPanel>
+                            </TabItem>
+
+                            <TabItem x:Name="tabNews">
+                                <DockPanel>
+                                    <Grid DockPanel.Dock="Top" Margin="0,0,0,16">
+                                        <TextBlock Text="Hírek kezelése" Foreground="White"
+                                                FontSize="22" FontWeight="SemiBold"/>
+                                        <Button Content="⟳ Frissítés" HorizontalAlignment="Right"
+                                             Style="{StaticResource ApproveBtn}"
+                                             Background="#3A3A5A" Click="btnRefreshNews_Click"/>
+                                    </Grid>
+
+                                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                        <ItemsControl x:Name="newsPanel">
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <StackPanel/>
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                        </ItemsControl>
+                                    </ScrollViewer>
+                                </DockPanel>
+                            </TabItem>
+
+                            <TabItem x:Name="tabAllData">
+                                <DockPanel>
+                                    <Grid DockPanel.Dock="Top" Margin="0,0,0,16">
+                                        <TextBlock Text="Összes adat megtekintése" Foreground="White"
+                                                FontSize="22" FontWeight="SemiBold"/>
+                                        <Button Content="⟳ Frissítés" HorizontalAlignment="Right"
+                                             Style="{StaticResource ApproveBtn}"
+                                             Background="#3A3A5A" Click="btnRefreshAllData_Click"/>
+                                    </Grid>
+
+                                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                        <StackPanel>
+                                            <TextBlock Text="👥 FELHASZNÁLÓK" Foreground="#FEC428"
+                                                    FontSize="16" FontWeight="SemiBold" Margin="0,0,0,8"/>
+                                            <DataGrid x:Name="usersGrid" AutoGenerateColumns="False"
+                                                   IsReadOnly="True" CanUserAddRows="False"
+                                                   CanUserDeleteRows="False" CanUserResizeRows="False"
+                                                   Background="#222240" Foreground="White"
+                                                   BorderBrush="#3A3A5A" BorderThickness="1"
+                                                   HeadersVisibility="Column" RowBackground="#2A2A4A"
+                                                   AlternatingRowBackground="#252540" GridLinesVisibility="Horizontal"
+                                                   HorizontalGridLinesBrush="#3A3A5A" Margin="0,0,0,24">
+                                                <DataGrid.ColumnHeaderStyle>
+                                                    <Style TargetType="DataGridColumnHeader">
+                                                        <Setter Property="Background" Value="#16162A"/>
+                                                        <Setter Property="Foreground" Value="#FEC428"/>
+                                                        <Setter Property="FontWeight" Value="SemiBold"/>
+                                                        <Setter Property="Padding" Value="8"/>
+                                                        <Setter Property="BorderBrush" Value="#3A3A5A"/>
+                                                        <Setter Property="BorderThickness" Value="0,0,1,1"/>
+                                                    </Style>
+                                                </DataGrid.ColumnHeaderStyle>
+                                                <DataGrid.Columns>
+                                                    <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="60"/>
+                                                    <DataGridTextColumn Header="Felhasználónév" Binding="{Binding Username}" Width="*"/>
+                                                    <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="*"/>
+                                                    <DataGridTextColumn Header="Kor" Binding="{Binding Age}" Width="80"/>
+                                                    <DataGridTextColumn Header="Szerepkör" Binding="{Binding Role}" Width="120"/>
+                                                </DataGrid.Columns>
+                                            </DataGrid>
+
+                                            <TextBlock Text="📷 FOTÓK" Foreground="#FEC428"
+                                                    FontSize="16" FontWeight="SemiBold" Margin="0,0,0,8"/>
+                                            <DataGrid x:Name="photosGrid" AutoGenerateColumns="False"
+                                                   IsReadOnly="True" CanUserAddRows="False"
+                                                   CanUserDeleteRows="False" CanUserResizeRows="False"
+                                                   Background="#222240" Foreground="White"
+                                                   BorderBrush="#3A3A5A" BorderThickness="1"
+                                                   HeadersVisibility="Column" RowBackground="#2A2A4A"
+                                                   AlternatingRowBackground="#252540" GridLinesVisibility="Horizontal"
+                                                   HorizontalGridLinesBrush="#3A3A5A" Margin="0,0,0,24">
+                                                <DataGrid.ColumnHeaderStyle>
+                                                    <Style TargetType="DataGridColumnHeader">
+                                                        <Setter Property="Background" Value="#16162A"/>
+                                                        <Setter Property="Foreground" Value="#FEC428"/>
+                                                        <Setter Property="FontWeight" Value="SemiBold"/>
+                                                        <Setter Property="Padding" Value="8"/>
+                                                        <Setter Property="BorderBrush" Value="#3A3A5A"/>
+                                                        <Setter Property="BorderThickness" Value="0,0,1,1"/>
+                                                    </Style>
+                                                </DataGrid.ColumnHeaderStyle>
+                                                <DataGrid.Columns>
+                                                    <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="60"/>
+                                                    <DataGridTextColumn Header="Típus" Binding="{Binding Type}" Width="120"/>
+                                                    <DataGridTextColumn Header="User ID" Binding="{Binding UserID}" Width="80"/>
+                                                    <DataGridTextColumn Header="Place ID" Binding="{Binding PlaceID}" Width="80"/>
+                                                    <DataGridTextColumn Header="Hely" Binding="{Binding Location}" Width="*"/>
+                                                    <DataGridCheckBoxColumn Header="Jóváhagyva" Binding="{Binding Approved}" Width="120"/>
+                                                </DataGrid.Columns>
+                                            </DataGrid>
+
+                                            <TextBlock Text="💬 KOMMENTEK" Foreground="#FEC428"
+                                                    FontSize="16" FontWeight="SemiBold" Margin="0,0,0,8"/>
+                                            <DataGrid x:Name="commentsGrid" AutoGenerateColumns="False"
+                                                   IsReadOnly="True" CanUserAddRows="False"
+                                                   CanUserDeleteRows="False" CanUserResizeRows="False"
+                                                   Background="#222240" Foreground="White"
+                                                   BorderBrush="#3A3A5A" BorderThickness="1"
+                                                   HeadersVisibility="Column" RowBackground="#2A2A4A"
+                                                   AlternatingRowBackground="#252540" GridLinesVisibility="Horizontal"
+                                                   HorizontalGridLinesBrush="#3A3A5A" Margin="0,0,0,24">
+                                                <DataGrid.ColumnHeaderStyle>
+                                                    <Style TargetType="DataGridColumnHeader">
+                                                        <Setter Property="Background" Value="#16162A"/>
+                                                        <Setter Property="Foreground" Value="#FEC428"/>
+                                                        <Setter Property="FontWeight" Value="SemiBold"/>
+                                                        <Setter Property="Padding" Value="8"/>
+                                                        <Setter Property="BorderBrush" Value="#3A3A5A"/>
+                                                        <Setter Property="BorderThickness" Value="0,0,1,1"/>
+                                                    </Style>
+                                                </DataGrid.ColumnHeaderStyle>
+                                                <DataGrid.Columns>
+                                                    <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="60"/>
+                                                    <DataGridTextColumn Header="Komment" Binding="{Binding CommentText}" Width="*"/>
+                                                    <DataGridTextColumn Header="Értékelés" Binding="{Binding Rating}" Width="80"/>
+                                                    <DataGridTextColumn Header="User ID" Binding="{Binding UserID}" Width="80"/>
+                                                    <DataGridTextColumn Header="Place ID" Binding="{Binding PlaceID}" Width="80"/>
+                                                    <DataGridCheckBoxColumn Header="Jóváhagyva" Binding="{Binding Approved}" Width="120"/>
+                                                    <DataGridTextColumn Header="Létrehozva" Binding="{Binding CreatedAt, StringFormat=yyyy-MM-dd HH:mm}" Width="150"/>
+                                                </DataGrid.Columns>
+                                            </DataGrid>
+
+                                            <TextBlock Text="📍 HELYEK" Foreground="#FEC428"
+                                                    FontSize="16" FontWeight="SemiBold" Margin="0,0,0,8"/>
+                                            <DataGrid x:Name="placesGrid" AutoGenerateColumns="False"
+                                                   IsReadOnly="True" CanUserAddRows="False"
+                                                   CanUserDeleteRows="False" CanUserResizeRows="False"
+                                                   Background="#222240" Foreground="White"
+                                                   BorderBrush="#3A3A5A" BorderThickness="1"
+                                                   HeadersVisibility="Column" RowBackground="#2A2A4A"
+                                                   AlternatingRowBackground="#252540" GridLinesVisibility="Horizontal"
+                                                   HorizontalGridLinesBrush="#3A3A5A" Margin="0,0,0,24">
+                                                <DataGrid.ColumnHeaderStyle>
+                                                    <Style TargetType="DataGridColumnHeader">
+                                                        <Setter Property="Background" Value="#16162A"/>
+                                                        <Setter Property="Foreground" Value="#FEC428"/>
+                                                        <Setter Property="FontWeight" Value="SemiBold"/>
+                                                        <Setter Property="Padding" Value="8"/>
+                                                        <Setter Property="BorderBrush" Value="#3A3A5A"/>
+                                                        <Setter Property="BorderThickness" Value="0,0,1,1"/>
+                                                    </Style>
+                                                </DataGrid.ColumnHeaderStyle>
+                                                <DataGrid.Columns>
+                                                    <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="60"/>
+                                                    <DataGridTextColumn Header="Google Place ID" Binding="{Binding GooglePlaceID}" Width="200"/>
+                                                    <DataGridTextColumn Header="Név" Binding="{Binding Name}" Width="*"/>
+                                                    <DataGridTextColumn Header="Cím" Binding="{Binding Address}" Width="*"/>
+                                                </DataGrid.Columns>
+                                            </DataGrid>
+                                        </StackPanel>
+                                    </ScrollViewer>
+                                </DockPanel>
+                            </TabItem>
+
+                            <TabItem x:Name="tabStatistics">
+                                <DockPanel>
+                                    <Grid DockPanel.Dock="Top" Margin="0,0,0,16">
+                                        <TextBlock Text="Statisztika - Legnépszerűbb helyek" Foreground="White"
+                                                FontSize="22" FontWeight="SemiBold"/>
+                                        <Button Content="⟳ Frissítés" HorizontalAlignment="Right"
+                                             Style="{StaticResource ApproveBtn}"
+                                             Background="#3A3A5A" Click="btnRefreshStatistics_Click"/>
+                                    </Grid>
+
+                                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                        <StackPanel>
+                                            <Border Background="#222240" CornerRadius="12" Padding="16" Margin="0,0,0,16">
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Text="Időszak:" Foreground="#FEC428" FontSize="14" 
+                                                            FontWeight="SemiBold" VerticalAlignment="Center" Margin="0,0,12,0"/>
+                                                    <ComboBox x:Name="cmbPeriod" Width="150"
+                                                           Style="{StaticResource ModernComboBox}"
+                                                           SelectionChanged="cmbPeriod_SelectionChanged">
+                                                        <ComboBoxItem Content="Ez az év" Tag="YEAR"/>
+                                                        <ComboBoxItem Content="Ez a hónap" IsSelected="True" Tag="MONTH"/>
+                                                        <ComboBoxItem Content="Ez a hét" Tag="WEEK"/>
+                                                        <ComboBoxItem Content="Ma" Tag="TODAY"/>
+                                                    </ComboBox>
+                                                </StackPanel>
+                                            </Border>
+
+                                            <Border Background="#222240" CornerRadius="12" Padding="20" Margin="0,0,0,16" MinHeight="400">
+                                                <Grid>
+                                                    <StackPanel x:Name="chartContainer">
+                                                        <TextBlock Text="📈 Top 10 Legnépszerűbb Hely" 
+                                                                Foreground="#FEC428" FontSize="18" 
+                                                                FontWeight="SemiBold" Margin="0,0,0,16"/>
+
+                                                        <ItemsControl x:Name="chartBars">
+                                                            <ItemsControl.ItemTemplate>
+                                                                <DataTemplate>
+                                                                    <Border Background="#1A1A2E" CornerRadius="8" 
+                                                                         Padding="12" Margin="0,0,0,8">
+                                                                        <Grid>
+                                                                            <Grid.RowDefinitions>
+                                                                                <RowDefinition Height="Auto"/>
+                                                                                <RowDefinition Height="Auto"/>
+                                                                            </Grid.RowDefinitions>
+
+                                                                            <Grid Grid.Row="0" Margin="0,0,0,8">
+                                                                                <Grid.ColumnDefinitions>
+                                                                                    <ColumnDefinition Width="*"/>
+                                                                                    <ColumnDefinition Width="Auto"/>
+                                                                                </Grid.ColumnDefinitions>
+
+                                                                                <TextBlock Text="{Binding PlaceName}" 
+                                                                                        Foreground="White" FontSize="14" 
+                                                                                        FontWeight="SemiBold"
+                                                                                        VerticalAlignment="Center"/>
+
+                                                                                <TextBlock Grid.Column="1" 
+                                                                                        Foreground="#FEC428" FontSize="14" 
+                                                                                        FontWeight="Bold"
+                                                                                        VerticalAlignment="Center">
+                                                                                 <Run Text="{Binding PopularityScore}"/>
+                                                                                 <Run Text=" pont" Foreground="#888"/>
+                                                                                </TextBlock>
+                                                                            </Grid>
+
+                                                                            <Grid Grid.Row="1">
+                                                                                <Border Background="#2A2A4A" CornerRadius="4" Height="24"/>
+                                                                                <Border Background="#FEC428" CornerRadius="4" 
+                                                                                     Height="24" HorizontalAlignment="Left"
+                                                                                     Width="{Binding BarWidth}">
+                                                                                    <Grid>
+                                                                                        <TextBlock Text="{Binding StatsText}" 
+                                                                                                Foreground="#12121F" FontSize="11" 
+                                                                                                FontWeight="SemiBold"
+                                                                                                VerticalAlignment="Center" 
+                                                                                                Margin="8,0"/>
+                                                                                    </Grid>
+                                                                                </Border>
+                                                                            </Grid>
+                                                                        </Grid>
+                                                                    </Border>
+                                                                </DataTemplate>
+                                                            </ItemsControl.ItemTemplate>
+                                                        </ItemsControl>
+
+                                                        <TextBlock x:Name="noDataMessage" Text="Nincs elérhető adat ehhez az időszakhoz" 
+                                                                Foreground="#666" FontSize="14" 
+                                                                HorizontalAlignment="Center" 
+                                                                Margin="0,40,0,0" Visibility="Collapsed"/>
+                                                    </StackPanel>
+                                                </Grid>
+                                            </Border>
+
+                                            <TextBlock Text="📊 RÉSZLETES STATISZTIKA" Foreground="#FEC428"
+                                                    FontSize="16" FontWeight="SemiBold" Margin="0,0,0,8"/>
+                                            <DataGrid x:Name="statisticsGrid" AutoGenerateColumns="False"
+                                                   IsReadOnly="True" CanUserAddRows="False"
+                                                   CanUserDeleteRows="False" CanUserResizeRows="False"
+                                                   Background="#222240" Foreground="White"
+                                                   BorderBrush="#3A3A5A" BorderThickness="1"
+                                                   HeadersVisibility="Column" RowBackground="#2A2A4A"
+                                                   AlternatingRowBackground="#252540" GridLinesVisibility="Horizontal"
+                                                   HorizontalGridLinesBrush="#3A3A5A" Margin="0,0,0,24">
+                                                <DataGrid.ColumnHeaderStyle>
+                                                    <Style TargetType="DataGridColumnHeader">
+                                                        <Setter Property="Background" Value="#16162A"/>
+                                                        <Setter Property="Foreground" Value="#FEC428"/>
+                                                        <Setter Property="FontWeight" Value="SemiBold"/>
+                                                        <Setter Property="Padding" Value="8"/>
+                                                        <Setter Property="BorderBrush" Value="#3A3A5A"/>
+                                                        <Setter Property="BorderThickness" Value="0,0,1,1"/>
+                                                    </Style>
+                                                </DataGrid.ColumnHeaderStyle>
+                                                <DataGrid.Columns>
+                                                    <DataGridTextColumn Header="Helyezés" Binding="{Binding Rank}" Width="80"/>
+                                                    <DataGridTextColumn Header="Hely neve" Binding="{Binding PlaceName}" Width="*"/>
+                                                    <DataGridTextColumn Header="Fotók" Binding="{Binding TotalPhotos}" Width="80"/>
+                                                    <DataGridTextColumn Header="Kommentek" Binding="{Binding TotalComments}" Width="100"/>
+                                                    <DataGridTextColumn Header="Átlag értékelés" Binding="{Binding AverageRating, StringFormat=F1}" Width="120"/>
+                                                    <DataGridTextColumn Header="Népszerűség" Binding="{Binding PopularityScore}" Width="120"/>
+                                                </DataGrid.Columns>
+                                            </DataGrid>
+                                        </StackPanel>
+                                    </ScrollViewer>
+                                </DockPanel>
+                            </TabItem>
+
+                        </TabControl>
+
+                        <Border x:Name="loadingOverlay" Background="#CC12121F"
+                             Visibility="Collapsed" CornerRadius="12">
+                            <TextBlock Text="Betöltés..." Foreground="#FEC428"
+                                    FontSize="16" HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"/>
+                        </Border>
+
+                    </Grid>
+                </Border>
+            </Grid>
+        </Grid>
+    </Border>
+    
 </Window>

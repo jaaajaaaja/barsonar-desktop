@@ -6,7 +6,7 @@ using System.Text.Json;
 
 namespace barsonar_desktop.services
 {
-    class ApiService
+    public class ApiService
     {
         private readonly HttpClient _httpClient;
         private readonly string BASE_URL;
