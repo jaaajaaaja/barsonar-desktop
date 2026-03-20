@@ -277,12 +277,132 @@ namespace barsonar_desktop
 
         private async Task LoadComments()
         {
+            if (loadingOverlay != null)
+                loadingOverlay.Visibility = Visibility.Visible;
 
+            try
+            {
+                var comments = await _api.GetAllCommentsAsync();
+                commentsPanel.Items.Clear();
+
+                foreach (var comment in comments)
+                {
+                    commentsPanel.Items.Add(BuildCommentCard(comment));
+                }
+
+                if (comments.Count == 0)
+                    commentsPanel.Items.Add(EmptyMessage("Nincsenek kommentek."));
+            }
+            catch (Exception ex)
+            {
+                commentsPanel.Items.Clear();
+                commentsPanel.Items.Add(EmptyMessage($"Hiba: {ex.Message}"));
+            }
+            finally
+            {
+                if (loadingOverlay != null)
+                    loadingOverlay.Visibility = Visibility.Collapsed;
+            }
         }
 
         private UIElement BuildCommentCard(Comment comment)
         {
-            return null;
+            var card = new Border
+            {
+                Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#222240")),
+                CornerRadius = new CornerRadius(12),
+                Margin = new Thickness(0, 0, 0, 10),
+                Padding = new Thickness(18, 14, 18, 14)
+            };
+
+            var grid = new Grid();
+            grid.ColumnDefinitions.Add(new ColumnDefinition());
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+
+            var leftStack = new StackPanel();
+
+            leftStack.Children.Add(CreateStatusBadge(comment.Approved));
+
+            leftStack.Children.Add(new TextBlock
+            {
+                Text = $"\"{comment.CommentText}\"",
+                Foreground = Brushes.White,
+                FontSize = 14,
+                TextWrapping = TextWrapping.Wrap,
+                Margin = new Thickness(0, 8, 0, 0)
+            });
+
+            var ratingText = comment.Rating.HasValue ? $"⭐ {comment.Rating}/5" : "Nincs értékelés";
+            leftStack.Children.Add(new TextBlock
+            {
+                Text = ratingText,
+                Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FEC428")),
+                FontSize = 12,
+                Margin = new Thickness(0, 4, 0, 0)
+            });
+
+            leftStack.Children.Add(new TextBlock
+            {
+                Text = $"User: {comment.UserID}  •  Hely: {comment.PlaceID}  •  {comment.CreatedAt:yyyy.MM.dd HH:mm}",
+                Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#666")),
+                FontSize = 11,
+                Margin = new Thickness(0, 4, 0, 0)
+            });
+
+            Grid.SetColumn(leftStack, 0);
+            grid.Children.Add(leftStack);
+
+            var rightStack = new StackPanel
+            {
+                VerticalAlignment = VerticalAlignment.Center,
+                Orientation = Orientation.Horizontal
+            };
+
+            if (!comment.Approved)
+            {
+                var approveBtn = CreateStyledButton("Jóváhagyás", "#2ECC71", "#27AE60");
+                approveBtn.Click += async (s, e) =>
+                {
+                    try
+                    {
+                        await _api.ApproveCommentAsync(comment.Id);
+                        await LoadComments();
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message, "Hiba", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                };
+                rightStack.Children.Add(approveBtn);
+            }
+
+            var deleteBtn = CreateStyledButton("Törlés", "#E74C3C", "#C0392B");
+            deleteBtn.Margin = new Thickness(6, 0, 0, 0);
+            deleteBtn.Click += async (s, e) =>
+            {
+                var result = MessageBox.Show("Biztosan törölni szeretnéd?", "Megerősítés",
+                    MessageBoxButton.YesNo, MessageBoxImage.Question);
+                if (result == MessageBoxResult.Yes)
+                {
+                    try
+                    {
+                        await _api.DeleteCommentAsync(comment.Id);
+                        await LoadComments();
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message, "Hiba", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                }
+            };
+            rightStack.Children.Add(deleteBtn);
+
+            Grid.SetColumn(rightStack, 1);
+            grid.Children.Add(rightStack);
+
+            card.Child = grid;
+
+            return card;
         }
 
         private async Task LoadNews()
