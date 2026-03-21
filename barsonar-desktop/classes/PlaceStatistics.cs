@@ -5,7 +5,7 @@ using System.Text.Json.Serialization;
 
 namespace barsonar_desktop.classes
 {
-    internal class PlaceStatistics
+    public class PlaceStatistics
     {
         [JsonPropertyName("placeId")]
         public int PlaceId { get; set; }

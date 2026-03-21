@@ -15,8 +15,8 @@ namespace barsonar_desktop.services
         {
             DotNetEnv.Env.Load();
 
-            BASE_URL = Environment.GetEnvironmentVariable("API_URL")
-                ?? throw new Exception("API_URL not set in .env");
+            BASE_URL = Environment.GetEnvironmentVariable("API_BASE_URL")
+                ?? throw new Exception("API_BASE_URL not set in .env");
 
             var handler = new HttpClientHandler
             {

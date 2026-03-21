@@ -2,7 +2,7 @@
 
 namespace barsonar_desktop.classes
 {
-    class News
+    public class News
     {
         [JsonPropertyName("id")]
         public int Id { get; set; }

@@ -131,7 +131,6 @@ namespace barsonar_desktop
         }
 
         //LOAD
-
         private async Task LoadPhotos()
         {
             if (loadingOverlay != null)
@@ -407,20 +406,286 @@ namespace barsonar_desktop
 
         private async Task LoadNews()
         {
+            if (loadingOverlay != null)
+                loadingOverlay.Visibility = Visibility.Visible;
 
+            try
+            {
+                var news = await _api.GetAllNewsAsync();
+                newsPanel.Items.Clear();
+
+                foreach (var item in news)
+                {
+                    newsPanel.Items.Add(BuildNewsCard(item));
+                }
+
+                if (news.Count == 0)
+                    newsPanel.Items.Add(EmptyMessage("Nincsenek hírek."));
+            }
+            catch (Exception ex)
+            {
+                newsPanel.Items.Clear();
+                newsPanel.Items.Add(EmptyMessage($"Hiba: {ex.Message}"));
+            }
+            finally
+            {
+                if (loadingOverlay != null)
+                    loadingOverlay.Visibility = Visibility.Collapsed;
+            }
         }
         private UIElement BuildNewsCard(News news)
         {
-            return null;
+            var card = new Border
+            {
+                Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#222240")),
+                CornerRadius = new CornerRadius(12),
+                Margin = new Thickness(0, 0, 0, 10),
+                Padding = new Thickness(18, 14, 18, 14)
+            };
+
+            var grid = new Grid();
+            grid.ColumnDefinitions.Add(new ColumnDefinition());
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+
+            var leftStack = new StackPanel();
+
+            leftStack.Children.Add(CreateStatusBadge(news.Approved));
+
+            leftStack.Children.Add(new TextBlock
+            {
+                Text = news.Text,
+                Foreground = Brushes.White,
+                FontSize = 14,
+                TextWrapping = TextWrapping.Wrap,
+                MaxWidth = 550,
+                Margin = new Thickness(0, 8, 0, 0)
+            });
+
+            leftStack.Children.Add(new TextBlock
+            {
+                Text = $"User: {news.UserID}  •  Hely: {news.PlaceID}  •  {news.CreatedAt:yyyy.MM.dd HH:mm}",
+                Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#666")),
+                FontSize = 11,
+                Margin = new Thickness(0, 6, 0, 0)
+            });
+
+            Grid.SetColumn(leftStack, 0);
+            grid.Children.Add(leftStack);
+
+            var rightStack = new StackPanel
+            {
+                VerticalAlignment = VerticalAlignment.Center,
+                Orientation = Orientation.Horizontal
+            };
+
+            if (!news.Approved)
+            {
+                var approveBtn = CreateStyledButton("Jóváhagyás", "#2ECC71", "#27AE60");
+                approveBtn.Click += async (s, e) =>
+                {
+                    try
+                    {
+                        await _api.ApproveNewsAsync(news.Id);
+                        await LoadNews();
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message, "Hiba", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                };
+                rightStack.Children.Add(approveBtn);
+            }
+
+            var deleteBtn = CreateStyledButton("Törlés", "#E74C3C", "#C0392B");
+            deleteBtn.Margin = new Thickness(6, 0, 0, 0);
+            deleteBtn.Click += async (s, e) =>
+            {
+                var result = MessageBox.Show("Biztosan törölni szeretnéd?", "Megerősítés",
+                    MessageBoxButton.YesNo, MessageBoxImage.Question);
+                if (result == MessageBoxResult.Yes)
+                {
+                    try
+                    {
+                        await _api.DeleteNewsAsync(news.Id);
+                        await LoadNews();
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message, "Hiba", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                }
+            };
+            rightStack.Children.Add(deleteBtn);
+
+            Grid.SetColumn(rightStack, 1);
+            grid.Children.Add(rightStack);
+
+            card.Child = grid;
+            return card;
         }
 
         private async Task LoadAllData()
         {
+            if (loadingOverlay != null)
+                loadingOverlay.Visibility = Visibility.Visible;
 
+            try
+            {
+                var usersTask = _api.GetAllUsersAsync();
+                var photosTask = _api.GetAllPhotosAsync();
+                var commentsTask = _api.GetAllCommentsAsync();
+                var placesTask = _api.GetAllPlacesAsync();
+
+                await Task.WhenAll(usersTask, photosTask, commentsTask, placesTask);
+
+                usersGrid.ItemsSource = usersTask.Result;
+                photosGrid.ItemsSource = photosTask.Result;
+                commentsGrid.ItemsSource = commentsTask.Result;
+                placesGrid.ItemsSource = placesTask.Result;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Hiba az adatok betöltésekor: {ex.Message}", "Hiba",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            finally
+            {
+                if (loadingOverlay != null)
+                    loadingOverlay.Visibility = Visibility.Collapsed;
+            }
         }
+
+        //STATISTICS
+
         private async Task LoadStatistics(PeriodEnum period = PeriodEnum.MONTH, int? year = null)
         {
+            ShowLoading(true);
 
+            try
+            {
+                var statistics = await FetchStatisticsAsync(period, year);
+
+                if (!HasValidStatistics(statistics))
+                {
+                    ShowEmptyStatisticsState();
+                    return;
+                }
+
+                var chartData = PrepareChartData(statistics);
+                DisplayStatistics(chartData);
+            }
+            catch (Exception ex)
+            {
+                HandleStatisticsError(ex);
+            }
+            finally
+            {
+                ShowLoading(false);
+            }
+        }
+
+        private async Task<List<PlaceStatistics>> FetchStatisticsAsync(PeriodEnum period, int? year)
+        {
+            return await _api.GetPlaceStatisticsAsync(period, year);
+        }
+
+        private bool HasValidStatistics(List<PlaceStatistics>? statistics)
+        {
+            return statistics != null && statistics.Count > 0;
+        }
+
+        private List<ChartBarData> PrepareChartData(List<PlaceStatistics> statistics)
+        {
+            var topPlaces = GetTopPlaces(statistics, maxCount: 10);
+            var maxScore = CalculateMaxScore(topPlaces);
+
+            return BuildChartDataList(topPlaces, maxScore);
+        }
+
+        private List<PlaceStatistics> GetTopPlaces(List<PlaceStatistics> statistics, int maxCount)
+        {
+            return statistics
+                .OrderByDescending(s => s.PopularityScore)
+                .Take(maxCount)
+                .ToList();
+        }
+
+        private int CalculateMaxScore(List<PlaceStatistics> places)
+        {
+            return places.Count > 0 ? places.Max(p => p.PopularityScore) : 0;
+        }
+
+        private List<ChartBarData> BuildChartDataList(List<PlaceStatistics> places, int maxScore)
+        {
+            const double MAX_BAR_WIDTH = 650.0;
+            var chartData = new List<ChartBarData>();
+
+            for (int i = 0; i < places.Count; i++)
+            {
+                var place = places[i];
+                var barWidth = CalculateBarWidth(place.PopularityScore, maxScore, MAX_BAR_WIDTH);
+
+                chartData.Add(CreateChartBarData(place, rank: i + 1, barWidth));
+            }
+
+            return chartData;
+        }
+
+        private double CalculateBarWidth(int score, int maxScore, double maxWidth)
+        {
+            if (maxScore <= 0) return 0;
+            return (score / (double)maxScore) * maxWidth;
+        }
+
+        private ChartBarData CreateChartBarData(PlaceStatistics place, int rank, double barWidth)
+        {
+            return new ChartBarData
+            {
+                Rank = rank,
+                PlaceName = place.PlaceName,
+                TotalPhotos = place.TotalPhotos,
+                TotalComments = place.TotalComments,
+                AverageRating = place.AverageRating,
+                PopularityScore = place.PopularityScore,
+                BarWidth = barWidth
+            };
+        }
+
+        private void DisplayStatistics(List<ChartBarData> chartData)
+        {
+            noDataMessage.Visibility = Visibility.Collapsed;
+            chartBars.ItemsSource = chartData;
+            statisticsGrid.ItemsSource = chartData;
+        }
+
+        private void ShowEmptyStatisticsState()
+        {
+            ClearStatisticsDisplay();
+            noDataMessage.Visibility = Visibility.Visible;
+        }
+
+        private void ClearStatisticsDisplay()
+        {
+            chartBars.ItemsSource = null;
+            statisticsGrid.ItemsSource = null;
+        }
+
+        private void HandleStatisticsError(Exception ex)
+        {
+            ClearStatisticsDisplay();
+            noDataMessage.Visibility = Visibility.Visible;
+            MessageBox.Show(
+                $"Hiba a statisztika betöltésekor: {ex.Message}",
+                "Hiba",
+                MessageBoxButton.OK,
+                MessageBoxImage.Error
+            );
+        }
+
+        private void ShowLoading(bool isLoading)
+        {
+            if (loadingOverlay != null)
+                loadingOverlay.Visibility = isLoading ? Visibility.Visible : Visibility.Collapsed;
         }
 
         //HELPERS
