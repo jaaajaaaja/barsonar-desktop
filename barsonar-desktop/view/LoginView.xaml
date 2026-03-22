@@ -112,7 +112,7 @@
 
             <StackPanel Width="320" VerticalAlignment="Center" Margin="0,-10,0,0">
 
-                <Image Source="/images/logo_admin.png" Height="80" Margin="0,0,0,10"
+                <Image Source="/images/barsonar_admin.png" Height="80" Margin="0,0,0,10"
                    RenderOptions.BitmapScalingMode="HighQuality"/>
 
                 <TextBlock Text="Admin Panel"

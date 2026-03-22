@@ -10,7 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="images\logo_admin.png" />
+    <None Remove="images\barsonar_admin.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="images\logo_admin.png" />
+    <Resource Include="images\barsonar_admin.png" />
   </ItemGroup>
 
   <ItemGroup>

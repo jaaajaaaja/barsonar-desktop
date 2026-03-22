@@ -346,7 +346,7 @@
                             <TabItem x:Name="tabPhotos">
                                 <DockPanel>
                                     <Grid DockPanel.Dock="Top" Margin="0,0,0,16">
-                                        <TextBlock Text="Fotók kezelése" Foreground="White"
+                                        <TextBlock Text="Fotók" Foreground="White"
                                                 FontSize="22" FontWeight="SemiBold"/>
                                         <Button Content="⟳ Frissítés" HorizontalAlignment="Right"
                                              Style="{StaticResource ApproveBtn}"
@@ -369,7 +369,7 @@
                             <TabItem x:Name="tabComments">
                                 <DockPanel>
                                     <Grid DockPanel.Dock="Top" Margin="0,0,0,16">
-                                        <TextBlock Text="Kommentek kezelése" Foreground="White"
+                                        <TextBlock Text="Kommentek" Foreground="White"
                                                 FontSize="22" FontWeight="SemiBold"/>
                                         <Button Content="⟳ Frissítés" HorizontalAlignment="Right"
                                              Style="{StaticResource ApproveBtn}"
@@ -391,7 +391,7 @@
                             <TabItem x:Name="tabNews">
                                 <DockPanel>
                                     <Grid DockPanel.Dock="Top" Margin="0,0,0,16">
-                                        <TextBlock Text="Hírek kezelése" Foreground="White"
+                                        <TextBlock Text="Hírek" Foreground="White"
                                                 FontSize="22" FontWeight="SemiBold"/>
                                         <Button Content="⟳ Frissítés" HorizontalAlignment="Right"
                                              Style="{StaticResource ApproveBtn}"
