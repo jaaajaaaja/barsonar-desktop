@@ -45,7 +45,7 @@ A projekt futtatásához szükséges:
 
 ## <span style="color:purple">Telepítés</span>
 
-#### 1. Klónozás és függőségek telepítése
+#### 1. Klónozás
 
 ```bash
 # Klónozd a repository-t  
@@ -65,8 +65,11 @@ barsonar-desktop.slnx
 ## <span style="color:purple">Futtatás</span>
 
 **Visual Studio 2022-vel:**
-1. Miután megnyitottad Visual Studioban nyomd meg az `F5`-öt vagy kattints a "Start" gombra
-2. Az alkalmazás ablaka megnyílik
+1. Hozz létre egy .env fájlt a projekt gyökerében
+    - vagy csak nevezd át a .env.example fájlt .env-re
+    - ha más porton fut a backend, mint az alapértelmezett akkor ne felejtsd el módosítani az API_BASE_URL-t 
+3. Miután megnyitottad Visual Studioban nyomd meg az `F5`-öt vagy kattints a "Start" gombra
+4. Az alkalmazás ablaka megnyílik
 
 **Parancssorból (CMD/PowerShell):**
 ```bash
@@ -89,6 +92,7 @@ dotnet run --project barsonar-desktop/barsonar-desktop.csproj
 ---
 
 **Szerző**: Barsonar fejlesztői csapat
+
 **Verzió**: 1.0.0
 
 **Utolsó frissítés:** 2026
