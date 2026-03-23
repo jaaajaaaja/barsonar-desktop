@@ -84,13 +84,6 @@ namespace barsonar_desktop
             await LoadNews();
         }
 
-        private async void btnNavAllData_Click(object sender, RoutedEventArgs e)
-        {
-            SetActiveNav(btnNavAllData);
-            tabControl.SelectedItem = tabAllData;
-            await LoadAllData();
-        }
-
         private async void btnNavStatistics_Click(object sender, RoutedEventArgs e)
         {
             SetActiveNav(btnNavStatistics);
@@ -106,7 +99,6 @@ namespace barsonar_desktop
             btnNavPhotos.Style = normalStyle;
             btnNavComments.Style = normalStyle;
             btnNavNews.Style = normalStyle;
-            btnNavAllData.Style = normalStyle;
             btnNavStatistics.Style = normalStyle;
             activeButton.Style = activeStyle;
         }
@@ -116,7 +108,6 @@ namespace barsonar_desktop
         private async void btnRefreshPhotos_Click(object sender, RoutedEventArgs e) => await LoadPhotos();
         private async void btnRefreshComments_Click(object sender, RoutedEventArgs e) => await LoadComments();
         private async void btnRefreshNews_Click(object sender, RoutedEventArgs e) => await LoadNews();
-        private async void btnRefreshAllData_Click(object sender, RoutedEventArgs e) => await LoadAllData();
         private async void btnRefreshStatistics_Click(object sender, RoutedEventArgs e) => await LoadStatistics();
 
         private async void cmbPeriod_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -522,37 +513,6 @@ namespace barsonar_desktop
 
             card.Child = grid;
             return card;
-        }
-
-        private async Task LoadAllData()
-        {
-            if (loadingOverlay != null)
-                loadingOverlay.Visibility = Visibility.Visible;
-
-            try
-            {
-                var usersTask = _api.GetAllUsersAsync();
-                var photosTask = _api.GetAllPhotosAsync();
-                var commentsTask = _api.GetAllCommentsAsync();
-                var placesTask = _api.GetAllPlacesAsync();
-
-                await Task.WhenAll(usersTask, photosTask, commentsTask, placesTask);
-
-                usersGrid.ItemsSource = usersTask.Result;
-                photosGrid.ItemsSource = photosTask.Result;
-                commentsGrid.ItemsSource = commentsTask.Result;
-                placesGrid.ItemsSource = placesTask.Result;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Hiba az adatok betöltésekor: {ex.Message}", "Hiba",
-                    MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-            finally
-            {
-                if (loadingOverlay != null)
-                    loadingOverlay.Visibility = Visibility.Collapsed;
-            }
         }
 
         //STATISTICS
