@@ -9,9 +9,6 @@
     - [1. Klónozás és függőségek telepítése](#1-klónozás-és-függőségek-telepítése)
     - [2. Projekt megnyitása](#2-projekt-megnyitása)
 - [Futtatás](#futtatás)
-- [Projekt felépítése](#projekt-felépítése)
-- [Biztonsági megjegyzések](#biztonsági-megjegyzések)
-    - [Fontos figyelmeztetések](#fontos-figyelmeztetések)
 - [Hozzájárulás](#hozzájárulás)
 
 ---
@@ -81,14 +78,17 @@ dotnet run --project barsonar-desktop/barsonar-desktop.csproj
 
 ## <span style="color:purple">Hozzájárulás</span>
 
-A projekt fejlesztéséhez:
+**A projekt fejlesztése során kérjük, hogy:**
 
-1. Hozz létre egy új ágat (`git checkout -b feature/uj-funkcio`)
-2. Commitold a módosításokat (`git commit -m 'Új funkció hozzáadása'`)
-3. Push-old az ágat (`git push origin feature/uj-funkcio`)
-4. Nyiss egy Pull Request-et
+1. Fork-old a repository-t
+2. Hozz létre egy feature branch-et (`git checkout -b feature/uj-funkcio`)
+3. Commit-old a változtatásaidat (`git commit -m 'Hozzáadva: új funkció'`)
+4. Push-old a branch-et (`git push origin feature/uj-funkcio`)
+5. Nyiss egy Pull Request-et
 
 ---
 
-**Szerző**: Barsonar Desktop csapat  
+**Szerző**: Barsonar fejlesztői csapat
 **Verzió**: 1.0.0
+
+**Utolsó frissítés:** 2026
